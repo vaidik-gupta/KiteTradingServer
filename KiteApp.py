@@ -49,3 +49,56 @@ class KiteApp:
         if token in self.subscribed_tokens:
             self.subscribed_tokens.remove(token)
 
+
+# --- TestKiteApp for testing purposes ---
+import random
+
+class TestKiteApp(KiteApp):
+    def __init__(self, test_db, *args, **kwargs):
+        """
+        test_db: dict mapping instrument_token to list of tick prices
+        """
+        super().__init__(api_key=None, access_token=None)
+        self.test_db = test_db
+        self.tick_index = {token: 0 for token in test_db}
+        self.token_ltp = {}
+        self.subscribed_tokens = set()
+
+
+    def subscribe(self, token):
+        self.subscribed_tokens.add(token)
+
+    def unsubscribe(self, token):
+        self.subscribed_tokens.discard(token)
+
+    def _simulate_tick(self, token):
+        """
+        Simulate a tick update for a token from the test_db
+        """
+        idx = self.tick_index[token]
+        ticks = self.test_db[token]
+        if idx < len(ticks):
+            self.token_ltp[token] = ticks[idx]
+            self.tick_index[token] += 1
+        else:
+            # Optionally loop or keep last value
+            self.token_ltp[token] = ticks[-1]
+
+    def start(self, min_delay=0.05, max_delay=0.2):
+        """
+        Starts a thread that waits a random amount of time before updating every subscribed tick.
+        """
+        def tick_worker():
+            while True:
+                delay = random.uniform(min_delay, max_delay)
+                time.sleep(delay)
+                for token in list(self.subscribed_tokens):
+                    self.simulate_tick(token)
+        thread = threading.Thread(target=tick_worker, daemon=True)
+        thread.start()
+
+    def reset(self):
+        self.token_ltp = {}
+        self.tick_index = {token: 0 for token in self.test_db}
+        self.subscribed_tokens = set()
+
