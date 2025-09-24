@@ -2,8 +2,6 @@ import time
 import threading
 from collections import deque
 from KiteApp import *
-import hashlib
-
 
 class TickBuffer:
     def __init__(self, size: int = 100, period: float = 1.0):
