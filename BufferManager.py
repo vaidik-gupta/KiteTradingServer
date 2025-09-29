@@ -13,8 +13,7 @@ class TickBuffer:
         self.period = period
         self.data = deque(maxlen=size)
         self.lock = threading.Lock()
-        self.metrics = []  # Placeholder for metric objects
-
+        
     def update(self, ltp):
         with self.lock:
             self.data.append(ltp)
