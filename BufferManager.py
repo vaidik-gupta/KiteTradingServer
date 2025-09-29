@@ -31,6 +31,7 @@ class BufferManager:
         self.buffers = {}
         self.token_ref = {}
         self.stop_flags = {}
+        self.kite_app.start()
 
 
     def _buffer_id(self,token,size,period):
@@ -82,6 +83,9 @@ class BufferManager:
             self.token_ref[token] += 1
 
         id = self._buffer_id(token,size,period)
+        if id in self.buffers:
+            return  # Already subscribed
+
         buffer_obj = TickBuffer(size,period)
         self.buffers[id] = buffer_obj
         self._init_buffer_thread(token,size,period)
