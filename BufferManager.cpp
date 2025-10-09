@@ -11,6 +11,8 @@ BufferManager::~BufferManager() {
 	time_series_list.clear();
 }
 
+
+
 void BufferManager::startTimeSeries(std::list<TimeSeries>::iterator it) {
 
     it->running = true;
