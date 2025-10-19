@@ -5,13 +5,13 @@
 #include <thread>
 #include <TickSource.h>
 
-struct TimeSeries{
+typedef struct ts{
     std::unique_ptr<TimeSeriesBase> ts;
     std::shared_ptr<TickSource> source;
     const uint64_t interval;
     std::thread worker;
     std::atomic<bool> running;
-};
+} TimeSeries;
 
 class BufferManager {
     private:

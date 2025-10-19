@@ -1,7 +1,5 @@
 #ifndef TICK_SOURCE_H
 #define TICK_SOURCE_H
-
-#include <TimeSeriesBase.h>
 #include <chrono>
 #include <atomic>
 
