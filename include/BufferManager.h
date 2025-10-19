@@ -10,7 +10,7 @@ typedef struct ts{
     std::shared_ptr<TickSource> source;
     const uint64_t interval;
     std::thread worker;
-    std::atomic<bool> running;
+    bool running;
 } TimeSeries;
 
 class BufferManager {
