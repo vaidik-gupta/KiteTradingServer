@@ -8,7 +8,7 @@ OBJDIR    := build
 TESTDIR   := tests
 
 # Target binary name
-TARGET    := kite_server
+TARGET    := kite_server.exe
 
 # Collect source files
 SOURCES   := $(wildcard $(SRCDIR)/*.cpp)
