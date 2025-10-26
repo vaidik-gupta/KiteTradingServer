@@ -10,20 +10,27 @@ TESTDIR   := tests
 # Target binary name
 TARGET    := kite_server.exe
 
-# Collect source files
+# Collect all source files
 SOURCES   := $(wildcard $(SRCDIR)/*.cpp)
-OBJECTS   := $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SOURCES))
+
+# Separate init.cpp (contains main)
+INIT_SRC  := $(SRCDIR)/init.cpp
+NON_INIT_SRCS := $(filter-out $(INIT_SRC), $(SOURCES))
+
+# Object files
+OBJECTS   := $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(NON_INIT_SRCS))
+INIT_OBJ  := $(OBJDIR)/init.o
 
 # Test files
 TEST_SOURCES := $(wildcard $(TESTDIR)/*.cpp)
-TEST_TARGETS := $(patsubst $(TESTDIR)/%.cpp, $(OBJDIR)/%_test, $(TEST_SOURCES))
+TEST_TARGETS := $(patsubst $(TESTDIR)/%.cpp, $(OBJDIR)/%.o, $(TEST_SOURCES))
 
 .PHONY: all tests clean
 
 all: $(TARGET)
 
-# Link main binary
-$(TARGET): $(OBJECTS)
+# Link main binary (includes init.o)
+$(TARGET): $(OBJECTS) $(INIT_OBJ)
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 # Compile source files
@@ -33,7 +40,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR)
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
-# Tests target
+# === Tests ===
 tests: $(TEST_TARGETS)
 	@echo "Running tests..."
 	@for t in $(TEST_TARGETS); do \
@@ -41,8 +48,8 @@ tests: $(TEST_TARGETS)
 	  ./$$t; \
 	done
 
-# Build each test
-$(OBJDIR)/%_test: $(TESTDIR)/%.cpp $(OBJECTS) | $(OBJDIR)
+# Build each test binary (link all non-init source objects)
+$(OBJDIR)/%.o: $(TESTDIR)/%.cpp $(OBJECTS) | $(OBJDIR)
 	$(CXX) $(CXXFLAGS) $< $(OBJECTS) -o $@
 
 clean:

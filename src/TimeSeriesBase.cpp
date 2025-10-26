@@ -10,7 +10,7 @@ void TimeSeriesBase::compute_metrics(double new_value)
     {
         if (metric_metadatas[i].func != nullptr)
         {
-            new_metrics[i] = metric_metadatas[i].func(data,new_value, metrics, metrics_size);
+            new_metrics[i] = metric_metadatas[i].func(data,new_value, metrics, metrics_size, metric_metadatas[i].args);
         }
     }
     std::copy(new_metrics, new_metrics + metrics_size, metrics);
@@ -24,7 +24,7 @@ TimeSeriesBase::TimeSeriesBase(size_t max_size, size_t metrics_size)
     for (size_t i = 0; i < metrics_size; ++i)
     {
         metrics[i] = {0.0, 0};
-        metric_metadatas[i] = {"", nullptr};
+        metric_metadatas[i] = {"", nullptr,nullptr};
     }
 }
 
