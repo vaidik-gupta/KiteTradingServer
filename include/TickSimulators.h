@@ -12,7 +12,6 @@ private:
     double max_tick_diff;
     uint64_t min_tick_interval;
     uint64_t max_tick_interval;
-    std::atomic<bool> stop_flag;
     std::thread ticker_thread;
 
 public:
@@ -26,9 +25,6 @@ public:
     ~RandomTickSimulator();
     void start();
     void stop();
-    double getValue() const;
-    uint64_t getTimestamp() const;
-    bool isRunning() const;
 };
 
 #endif // RANDOM_TICK_SIMULATOR_H

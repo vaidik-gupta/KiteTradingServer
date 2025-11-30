@@ -1,6 +1,7 @@
 # Compiler & flags
 CXX       := g++
-CXXFLAGS  := -std=c++20 -Wall -Wextra -Iinclude
+CXXFLAGS  := -std=c++17 -Wall -Wextra -Iinclude -pthread
+LDFLAGS   := -lssl -lcrypto -lboost_system -lboost_thread
 
 # Directories
 SRCDIR    := src
@@ -31,7 +32,7 @@ all: $(TARGET)
 
 # Link main binary (includes init.o)
 $(TARGET): $(OBJECTS) $(INIT_OBJ)
-	$(CXX) $(CXXFLAGS) $^ -o $@
+	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 
 # Compile source files
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR)
@@ -50,7 +51,7 @@ tests: $(TEST_TARGETS)
 
 # Build each test binary (link all non-init source objects)
 $(OBJDIR)/%.o: $(TESTDIR)/%.cpp $(OBJECTS) | $(OBJDIR)
-	$(CXX) $(CXXFLAGS) $< $(OBJECTS) -o $@
+	$(CXX) $(CXXFLAGS) $< $(OBJECTS) $(LDFLAGS) -o $@
 
 clean:
 	rm -rf $(OBJDIR) $(TARGET)

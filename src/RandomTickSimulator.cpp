@@ -15,12 +15,10 @@ RandomTickSimulator::RandomTickSimulator(
     : min_tick_diff(min_tick_diff),
       max_tick_diff(max_tick_diff),
       min_tick_interval(min_tick_interval),
-      max_tick_interval(max_tick_interval),
-      stop_flag(false)
+      max_tick_interval(max_tick_interval)
 {
+    stop_flag = true;
     value = initialValue;
-    timestamp = 0;
-    running = false;
 }
 
 RandomTickSimulator::~RandomTickSimulator() {
@@ -28,7 +26,7 @@ RandomTickSimulator::~RandomTickSimulator() {
 }
 
 void RandomTickSimulator::start() {
-    stop_flag = false;
+
     ticker_thread = std::thread([this]() {
         std::random_device rd;
         std::mt19937 gen(rd());
@@ -38,17 +36,19 @@ void RandomTickSimulator::start() {
         while (!stop_flag) {
             double tick_diff = dis_diff(gen);
             int direction = dis_direction(gen);
+            double old_value = value.load();
             if(direction == 0) {
-                value -= tick_diff;
+                old_value -= tick_diff;
             } else {
-                value += tick_diff;
+                old_value += tick_diff;
             }
-            timestamp += dis_interval(gen);
+
+            value.store(old_value);
             
             std::this_thread::sleep_for(std::chrono::milliseconds(dis_interval(gen)));
         }
     });
-    running = true;
+    stop_flag = false;
 }
 
 void RandomTickSimulator::stop() {
@@ -56,17 +56,4 @@ void RandomTickSimulator::stop() {
     if (ticker_thread.joinable()) {
         ticker_thread.join();
     }
-    running = false;
-}
-
-double RandomTickSimulator::getValue() const {
-    return value;
-}
-
-uint64_t RandomTickSimulator::getTimestamp() const {
-    return timestamp;
-}
-
-bool RandomTickSimulator::isRunning() const {
-    return running;
 }
