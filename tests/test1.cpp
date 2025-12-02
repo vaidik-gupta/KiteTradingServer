@@ -7,7 +7,6 @@
 #include <assert.h>
 #include <cstdio>
 
-#define BINANCEURL "wss://stream.binance.com:9443/ws/btcusdt@trade"
 
 
 signed main(){

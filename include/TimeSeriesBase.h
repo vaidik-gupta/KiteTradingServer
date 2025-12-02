@@ -18,7 +18,11 @@ class MetricMetadata {
     public:
         std::string name;
         MetricFunc func;
-        MetricFuncArgs* args;
+        MetricFuncArgs * args;
+        ~MetricMetadata(){
+            delete args;
+        }
+
 };
 
 class TimeSeriesBase {

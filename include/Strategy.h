@@ -3,9 +3,11 @@
 #include <BufferManager.h>
 #include <list>
 
-typedef std::list<TimeSeries>::iterator TSIter;
 
-using TransFunc = uint32_t (*)(const uint32_t n_ts, TSIter * time_series_list);
+
+using TSIter = std::list<TimeSeries>::iterator;
+using TransFunc = uint32_t (*)(uint32_t n_ts, TSIter* time_series_list);
+
 
 
 class Strategy{

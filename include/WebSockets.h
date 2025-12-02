@@ -13,6 +13,11 @@ typedef websocketpp::client<websocketpp::config::asio_tls_client> client;
 typedef websocketpp::lib::error_code SocketError;
 typedef  client::connection_ptr ConnectionPtr;
 
+
+#define BINANCEURL "wss://stream.binance.com:9443/ws/btcusdt@trade"
+
+
+
 using OnMessageFunc1 =  void (*) (TickSource *, websocketpp::connection_hdl, client::message_ptr);
 // using OnMessageFunc2 = 
 
