@@ -10,7 +10,7 @@
 #define MAKE_METADATA(name, ...) \
 { \
     .name = MAKE_NAME(name), \
-    .func_ptr = FUNC_PTR(name), \
+    .func = FUNC_PTR(name), \
     .args = MAKE_ARGS(name, __VA_ARGS__) \
 }
 
