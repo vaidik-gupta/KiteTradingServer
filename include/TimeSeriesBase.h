@@ -12,13 +12,22 @@ struct MetricData {
     uint64_t flag;
 };
 
-using MetricFunc = MetricData (*)(const std::deque<double>&, double new_data, MetricData*, size_t, MetricFuncArgs *);
+
+class MetricDs{
+    public:
+    virtual ~MetricDs();
+    virtual double update(const std::deque<double>& data, double new_data, MetricData* metrics, size_t metric_size, MetricFuncArgs * args) = 0;
+};
+
+
+using MetricFunc = MetricData (*)(const std::deque<double>&, double new_data, MetricData*, size_t, MetricFuncArgs *, MetricDs * );
 
 class MetricMetadata {
     public:
         std::string name;
         MetricFunc func;
         MetricFuncArgs * args;
+
         ~MetricMetadata(){
             delete args;
         }
@@ -38,6 +47,7 @@ protected:
 
 public:
     MetricMetadata* metric_metadatas;
+    MetricDs ** dss;
     TimeSeriesBase(size_t max_size, size_t metrics_size);
     virtual ~TimeSeriesBase();
     virtual void add_data(double value);

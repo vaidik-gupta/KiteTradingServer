@@ -1,6 +1,6 @@
 # Compiler & flags
 CXX       := g++
-CXXFLAGS  := -std=c++17 -Wall -Wextra -Iinclude -pthread
+CXXFLAGS  := -std=c++17 -Wall -Wextra -Wno-unused -Iinclude -pthread
 LDFLAGS   := -lssl -lcrypto -lboost_system -lboost_thread
 
 # Directories
