@@ -8,18 +8,20 @@ double HighLowDs::update(const std::deque<double>& data, double new_data, Metric
 
     uint64_t size = data.size();
 
-    if (!dq.empty() && dq.front() <= current_index - window) {
+
+    if (!dq.empty() && dq.front() + window <= current_index) {
         dq.pop_front();
     }
 
-    while (!dq.empty() && (low ^ (data[size - current_index + dq.back()] <= new_data))) {
+    while (!dq.empty() && ((data[size + dq.back() - current_index] <= new_data) == !low)) {
         dq.pop_back();
     }
 
-    dq.push_back(current_index);  
-    
-    if(dq.front() == current_index++) return new_data;
+    dq.push_back(current_index);
 
-    return data[size - current_index + dq.front()];
+    current_index++;
+
+    if(dq.front() == (current_index - 1)) return new_data;
+    return data[size + dq.front() + 1 - current_index];
 
 }

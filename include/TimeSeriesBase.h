@@ -28,6 +28,7 @@ class MetricMetadata {
         MetricFunc func;
         MetricFuncArgs * args;
 
+
         ~MetricMetadata(){
             delete args;
         }
@@ -46,7 +47,7 @@ protected:
     virtual void compute_metrics(double new_value);
 
 public:
-    MetricMetadata* metric_metadatas;
+    MetricMetadata** metric_metadatas;
     MetricDs ** dss;
     TimeSeriesBase(size_t max_size, size_t metrics_size);
     virtual ~TimeSeriesBase();

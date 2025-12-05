@@ -8,9 +8,9 @@ void TimeSeriesBase::compute_metrics(double new_value)
     MetricData new_metrics[metrics_size];
     for (size_t i = 0; i < metrics_size; ++i)
     {
-        if (metric_metadatas[i].func != nullptr)
+        if (metric_metadatas[i]->func != nullptr)
         {
-            new_metrics[i] = metric_metadatas[i].func(data,new_value, metrics, metrics_size, metric_metadatas[i].args, dss[i]);
+            new_metrics[i] = metric_metadatas[i]->func(data,new_value, metrics, metrics_size, metric_metadatas[i]->args, dss[i]);
         }
     }
     std::copy(new_metrics, new_metrics + metrics_size, metrics);
@@ -20,12 +20,12 @@ TimeSeriesBase::TimeSeriesBase(size_t max_size, size_t metrics_size)
     : max_size(max_size), metrics_size(metrics_size)
 {
     metrics = new MetricData[metrics_size];
-    metric_metadatas = new MetricMetadata[metrics_size]();
+    metric_metadatas = new MetricMetadata*[metrics_size]();
     dss = new MetricDs*[metrics_size];
     for (size_t i = 0; i < metrics_size; ++i)
     {
         metrics[i] = {0.0, 0};
-        metric_metadatas[i] = {"", nullptr,nullptr};
+        metric_metadatas[i] = nullptr;
         dss[i] = nullptr;
     }
 }
@@ -33,6 +33,10 @@ TimeSeriesBase::TimeSeriesBase(size_t max_size, size_t metrics_size)
 TimeSeriesBase::~TimeSeriesBase()
 {
     delete[] metrics;
+    for(size_t i = 0; i < metrics_size; ++i){
+        delete dss[i];
+        delete metric_metadatas[i];
+    }
     delete[] metric_metadatas;
     delete[] dss;
 }

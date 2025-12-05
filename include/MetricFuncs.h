@@ -9,13 +9,15 @@
 #define MAKE_NAME(name) #name
 #define MAKE_DS(name, ...) MetricDs_##name(__VA_ARGS__)
 
+#define MAKE_METADATA(metric_name, ...)                                         \
+    ([&]() {                                                             \
+        MetricMetadata* _m = new MetricMetadata();                                       \
+        _m->name = MAKE_NAME(metric_name);                                      \
+        _m->func = FUNC_PTR(metric_name);                                       \
+        _m->args = MAKE_ARGS(metric_name, __VA_ARGS__);                         \
+        return _m;                                                       \
+    }())
 
-#define MAKE_METADATA(name, ...) \
-{ \
-    .name = MAKE_NAME(name), \
-    .func = FUNC_PTR(name), \
-    .args = MAKE_ARGS(name, __VA_ARGS__) \
-}
 
 #define DS_UPDATE(data, new_data, m_data, size, args, ds) \
     ((ds) != nullptr) ? \
@@ -26,7 +28,7 @@
 //  initialize a class as a header for the DS needed to implement in ds file
 
 #define MetricDs_ltp() nullptr
-MetricData Func_ltp(const std::deque<double>& data, double new_data, MetricData* m_data, size_t size, MetricFuncArgs * args, MetricDs * ds){
+inline MetricData Func_ltp(const std::deque<double>& data, double new_data, MetricData* m_data, size_t size, MetricFuncArgs * args, MetricDs * ds){
     return {new_data, 1};
 }
 
@@ -45,23 +47,23 @@ class HighLowDs: public MetricDs{
 };
 
 #define MetricDs_range_high(window) new HighLowDs(window,0)  
-MetricData Func_range_high(const std::deque<double>& data, double new_data, MetricData* m_data, size_t size, MetricFuncArgs * args, MetricDs * ds){
+inline MetricData Func_range_high(const std::deque<double>& data, double new_data, MetricData* m_data, size_t size, MetricFuncArgs * args, MetricDs * ds){
 
     double metric = DS_UPDATE(data,new_data,m_data,size,args,ds);
 
     WindowArg * args2 = dynamic_cast<WindowArg *>(args);
 
-    if(data.size() < args2->window) return {0.0,0};
+    if(data.size() < args2->window-1) return {0.0,0};
     return {metric, 1};
 }
 
 #define MetricDs_range_low(window) new HighLowDs(window,1)  
-MetricData Func_range_low(const std::deque<double>& data, double new_data, MetricData* m_data, size_t size, MetricFuncArgs * args, MetricDs * ds){
+inline MetricData Func_range_low(const std::deque<double>& data, double new_data, MetricData* m_data, size_t size, MetricFuncArgs * args, MetricDs * ds){
 
     double metric = DS_UPDATE(data,new_data,m_data,size,args,ds);
     WindowArg * args2 = dynamic_cast<WindowArg *>(args);
 
-    if(data.size() < args2->window) return {0.0,0};
+    if(data.size() < args2->window-1) return {0.0,0};
     return {metric, 1};
 }
 
